@@ -39,7 +39,14 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
-            preparedStatement.executeUpdate();
+            try {
+                preparedStatement.executeUpdate();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                e.printStackTrace();
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,7 +57,13 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Connection connection = Util.getConnetion();
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlScript)) {
             preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
+            try {
+                preparedStatement.executeUpdate();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                e.printStackTrace();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -76,7 +89,14 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void cleanUsersTable() {
         try (Connection connection = Util.getConnetion(); Statement statement = connection.createStatement()) {
-            statement.execute("TRUNCATE Users;");
+            try {
+                statement.execute("TRUNCATE Users;");
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                e.printStackTrace();
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
